@@ -90,15 +90,19 @@ Figure 4: Permutation Feature Importance and SHAP Analysis of the XGBClassifier
    Description: SHAP summary plot for dimension two of the output shap values. Dimension two corresponds with class two (negative loop TOF output).
    
 Figure 5: Counterfactuals of the OP XGBClassifier Model
-   A. 
-   Filename: 
-   Description: 
+   A. Filename: clf-op-mean-perturbations-normalized.tiff
+   Description: counterfactual mean perturbations for the three transformations considered.
    
 Figure 6: Parity Plots for the XGBRegressors
-   A. Filename: 
-   Description: 
-   
+   A. Filename: op-parity-plot.tiff
+   Description: log-scale parity plot of the prediciton results of the Original Parameter XGB Regressor
+
+   B. Filename: rc-parity-plot.tiff
+   Description: log-scale parity plot of the prediciton results of the Rate Constants XGB Regressor
+
 Figure 7: Permutation Feature Importance and SHAP analysis on the XGBRegressor model
-   A. 
-   Filename: 
-   Description: 
+   A. Filename: xgb_reg-op-feat-importances.tiff
+   Description: Permutation Feature Importance (PFI) results for the original parameter XGBRegressor.
+
+   B. Filename: reg-op-shap-summary-plot.tiff
+   Description: Shap summary plot for the original parameter XGBRegressor.

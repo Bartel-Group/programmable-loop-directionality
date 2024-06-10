@@ -63,9 +63,35 @@ input-parameters
    Filename: SetA / BatchB (where A denotes the Set number and B denotes the batch number)
    Description: To leverage parallel computing efforts, the input parameters were sectioned into sets and batches. The input-parameter folder includes the 174,312 input parameters for the screening process. Each of these parameter sets was submitted to the LoopSimulation.jl for micro kinetic modeling of the 3-species loop on a programmable catalyst surface.
    
-simulation-results
-   C. Filename: final_simulation_outputs.csv   
+csvs: CSV files of the full data sets and subsets used for ML model development
+   A. Filename: final_simulation_outputs.csv   
       Description: Parameter inputs for the parameter screen and the resulting loop turnover frequency output and steady state condition of each simulation. Steady state condition denotes whether or not the simulation converged upon a dynamic steady state solution.
    
-   D. Filename: final_simulation_outputs_rc.csv
+   B. Filename: final_simulation_outputs_rc.csv
        Description: The parameter inputs for the parameter screen were used to compute the rate constants governing each elementary reactions in the system. This file contains the rate constants for each simulation and the resulting loop turnover frequency output and steady state condition of each. 
+
+   C. Filename: ml_data_op_steady.csv
+       Description: Converged simulation outputs and their corresponding original parameter features for ML model development and training of classification models.
+
+   D. Filename: ml_data_op_transient.csv
+       Description: Simulations that did not reach steady state and therefore have no useful loop turnover frequency data. Includes their corresponding original parameter features.
+
+   E. Filename: ml_data_rc_steady.csv
+       Description: Converged simulation outputs and their corresponding rate constant features for ML model development and training of regression models.
+
+   F. Filename: ml_data_rc_transient.csv
+       Description: Simulations that did not reach steady state and therefore have no useful loop turnover frequency data. Includes their corresponding rate constant features.
+
+pkls: Results from the cross validation and grid search of hyperparameters to find the best model. Key files used in the manuscript are listed below.
+   A. Filename: op_steady/xgb_clf_op-best-estm.pkl
+      Description: Original Parameter XGBClassifier model
+
+   B. Filename: op_steady/xgb_reg_op-best-estm.pkl
+      Description: Original Parameter XGBRegressor model
+
+   C. Filename: rc_steady/xgb_clf_rc-best-estm.pkl
+      Description: Rate Constant XGBClassifier model
+
+   D. Filename: op_steady/xgb_reg_rc-best-estm.pkl
+      Description: Rate Constants XGBRegressor model
+
