@@ -2,10 +2,10 @@ import os
 import re
 import pandas as pd
 
-DATA_DIR = "/Users/maddymurphy/Documents/Loop Directionality/programmable-loop-directionality/data/simulation-results"
+CSVS_DIR = os.path.join("..", "..", "data", "csvs")
 
 
-def load_data(filename, data_dir=DATA_DIR):
+def load_data(filename, data_dir=CSVS_DIR):
     """
     Args:
         filename (string): The name of the file to load.
@@ -17,7 +17,7 @@ def load_data(filename, data_dir=DATA_DIR):
     return pd.read_csv(os.path.join(data_dir, filename))
 
 
-def save_data(df, filename, data_dir=DATA_DIR):
+def save_data(df, filename, data_dir=CSVS_DIR):
     """
     Args:
         df (pandas.DataFrame): The dataframe to save.
@@ -113,6 +113,10 @@ def main():
 
         df = rename_columns(df, col_aliases)
         df = remove_columns(df, removals)
+
+        # Catch any values of the TOF that didn't get set to 0 by Julia
+        df["loop-tof"] = df["loop-tof"].apply(lambda x: 0 if -1e-4 < x < 1e-4 else x)
+
         df_steady, df_transient = split_steady_transient(df)
 
         save_data(df_steady, f"ml_data_{tag.lower()}_steady.csv")
