@@ -27,7 +27,7 @@ def load_csv(filename, data_dir=CSVS_DIR):
     return pd.read_csv(os.path.join(data_dir, filename))
 
 
-def map_target_classes(df, target, encoding):
+def map_target_classes(df, target, new_target_name, encoding):
     """
     Args:
         df (pandas.DataFrame): The dataframe to map the target classes.
@@ -38,7 +38,7 @@ def map_target_classes(df, target, encoding):
     Returns:
         pandas.DataFrame
     """
-    df["class"] = df[target].map(encoding)
+    df[new_target_name] = df[target].map(encoding)
     return df
 
 
@@ -165,6 +165,7 @@ def main():
         df = map_target_classes(
             df_orig,
             target="loop-tof",
+            new_target_name="direction",
             encoding=lambda x: (
                 1
                 if float("inf") > x >= 1e-4
@@ -174,7 +175,7 @@ def main():
 
         X_train, X_test, Y_train, Y_test = split_train_test(
             df,
-            target="class",
+            target="direction",
             features=features,
             test_size=0.10,
             random_state=SEED,
