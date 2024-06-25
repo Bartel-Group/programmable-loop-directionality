@@ -4,6 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 CSVS_DIR = os.path.join("..", "..", "data", "csvs")
+FIGS_DIR = os.path.join("..", "..", "figures")
 
 
 def set_rc_params():
@@ -53,7 +54,9 @@ def load_csv(filename, data_dir=CSVS_DIR):
     return pd.read_csv(os.path.join(data_dir, filename))
 
 
-def mean_perturbations_barplot(mean_perturbations_df):
+def mean_perturbations_barplot(
+    mean_perturbations_df, filename="mean-perturbations-barplot.png"
+):
     """
     Args:
         mean_perturbations_df (dict): A dictionary of DataFrames with the mean perturbations for each class transition.
@@ -64,13 +67,17 @@ def mean_perturbations_barplot(mean_perturbations_df):
     labels = ["Positive to Negative", "Negative to Positive", "Zero to Positive"]
     colors = ["#003f5c", "#bc5090", "#ffa600"]
 
-    mean_perturbations_df.plot(kind="barh", color=colors)
+    fig, ax = plt.subplots()
+
+    mean_perturbations_df.plot(kind="barh", color=colors, ax=ax)
 
     plt.xticks(rotation=0)
-
     plt.xlabel("Mean Perturbation")
+
     plt.ylabel("Feature")
     plt.legend(labels)
+
+    plt.savefig(os.path.join(FIGS_DIR, "figure5", filename), dpi=300)
     plt.show()
 
     return None

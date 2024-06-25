@@ -83,7 +83,7 @@ def split_TOFs_by_BEA(df):
     return low_bea_df, med_bea_df, high_bea_df
 
 
-def plot_piechart(df):
+def plot_piechart(df, filename="TOF_piechart.png"):
     """
     Args:
         df (pandas.DataFrame): The DataFrame to plot
@@ -113,12 +113,14 @@ def plot_piechart(df):
         loc="center left",
         bbox_to_anchor=(1, 0, 0.5, 1),
     )
+
+    plt.savefig(os.path.join(FIGS_DIR, "figure2", filename), dpi=300)
     plt.show()
 
     return fig, ax
 
 
-def plot_histogram(df):
+def plot_histogram(df, filename="TOF_histogram.png"):
     """
     Args:
         df (pandas.DataFrame): The DataFrame to plot
@@ -198,12 +200,13 @@ def plot_histogram(df):
         width=1.5,
     )
 
+    plt.savefig(os.path.join(FIGS_DIR, "figure2", filename), dpi=300)
     plt.show()
 
     return fig, ax
 
 
-def plot_BEA_histogram(df):
+def plot_BEA_histogram(df, filename="BEA_histogram.png"):
 
     pos_df, neg_df, zero_df = split_TOFs_by_sign(df)
     pos_low_bea_df, pos_med_bea_df, pos_high_bea_df = split_TOFs_by_BEA(pos_df)
@@ -229,8 +232,6 @@ def plot_BEA_histogram(df):
     fig, ax = plt.subplots(2, 1, figsize=(14, 10), dpi=300, gridspec_kw={"hspace": 0.0})
     colors = ["#003f5c", "#955196", "#ff6e54", "#444e86", "#dd5182", "#ffa600"]
 
-    # plot each subset
-    # Plot the stacked histograms for positive subsets on ax[1]
     ax[0].hist(
         [pos_bea_df[col] for col in pos_bea_df.columns],
         bins,
@@ -249,7 +250,6 @@ def plot_BEA_histogram(df):
         loc="upper right",
     )
 
-    # Plot the stacked histograms for negative subsets on ax[2]
     ax[1].hist(
         [neg_bea_df[col] for col in neg_bea_df.columns],
         bins,
@@ -327,6 +327,7 @@ def plot_BEA_histogram(df):
         width=1.5,
     )
 
+    plt.savefig(os.path.join(FIGS_DIR, "figure3", filename), dpi=300)
     plt.show()
 
     return fig, ax
