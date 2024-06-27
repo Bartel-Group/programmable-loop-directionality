@@ -16,6 +16,10 @@ def load_csv(filename, data_dir=CSVS_DIR):
     return pd.read_csv(os.path.join(data_dir, filename))
 
 
+def load_best_model(filename, data_dir=PKLS_DIR):
+    return joblib.load(os.path.join(data_dir, filename))
+
+
 def split_train_test(
     df,
     target,
@@ -61,14 +65,6 @@ def map_target(df, target, new_target_name, encoding):
     return df
 
 
-def load_search_results(filename, data_dir=PKLS_DIR):
-    return joblib.load(os.path.join(data_dir, filename))
-
-
-def get_best_model(search_results):
-    return search_results.best_estimator_
-
-
 def check_reg_errors(model_file, data_file, use_test_set=False):
 
     if use_test_set:
@@ -98,7 +94,7 @@ def check_reg_errors(model_file, data_file, use_test_set=False):
         check_shape=False,
     )
 
-    model = get_best_model(load_search_results(model_file))
+    model = load_best_model(model_file)
 
     if use_test_set:
         x_true = X_test
@@ -157,7 +153,7 @@ def check_clf_errors(model_file, data_file, use_test_set=False):
         check_shape=False,
     )
 
-    model = get_best_model(load_search_results(model_file))
+    model = load_best_model(model_file)
 
     if use_test_set:
         x_true = X_test
@@ -168,7 +164,7 @@ def check_clf_errors(model_file, data_file, use_test_set=False):
 
     y_pred = model.predict(x_true)
 
-    acc = np.mean(y_pred == y_true)
+    acc = np.mean([y_true[i] == y_pred[i] for i in range(len(y_pred))])
     weighted_f1 = f1_score(y_true, y_pred, average="weighted")
     print(f"Model: {model_file}")
     print(f"Accuracy: {acc}")
@@ -187,7 +183,7 @@ def main():
 
     for m in model_type:
         for d in data_type:
-            model_file = f"{d}_steady/xgb_{m}_{d}.pkl"
+            model_file = f"{d}_steady/xgb_{m}_{d}-best-estm.pkl"
             data_file = f"ml_data_{d}_steady.csv"
             if m == "reg":
                 check_reg_errors(model_file, data_file, use_test_set=True)
