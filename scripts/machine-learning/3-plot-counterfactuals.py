@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -74,8 +75,7 @@ def mean_perturbations_barplot(
     plt.xticks(rotation=0)
     plt.xlabel("Mean Perturbation")
 
-    plt.ylabel("Feature")
-    plt.legend(labels)
+    plt.legend(labels, loc="upper right")
 
     plt.savefig(os.path.join(FIGS_DIR, "figure5", filename), dpi=300)
     plt.show()
@@ -84,8 +84,6 @@ def mean_perturbations_barplot(
 
 
 def main():
-
-    # set_rc_params()
 
     start_classes = [1, 2, 0]
     desired_classes = [2, 1, 1]
@@ -101,10 +99,21 @@ def main():
         )
         mean_values = perturbations_df.mean()
 
-        mean_perturbations_dict[f"{start}_to_{desired}"] = mean_values
+        alpha_mean_values = mean_values[["alpha-a", "alpha-b", "alpha-c"]].mean()
+        alpha_std = mean_values[["alpha-a", "alpha-b", "alpha-c"]].std()
+        beta_mean_values = mean_values[["beta-a", "beta-b", "beta-c"]].mean()
+        gamma_mean_values = mean_values[["gamma-b-a", "gamma-c-a"]].mean()
+        delta_mean_values = mean_values[["delta-b-a", "delta-c-a"]].mean()
+
+        mean_perturbations_dict[f"{start}_to_{desired}"] = {
+            r"$\alpha_i$": alpha_mean_values,
+            r"$\beta_i$": beta_mean_values,
+            r"$\gamma_{i-j}$": gamma_mean_values,
+            r"$\delta_{i-j}$": delta_mean_values,
+            r"$\Delta BE_A$": mean_values["change-in-bea"],
+        }
 
     mean_perturbations_df = pd.DataFrame(mean_perturbations_dict)
-    return mean_perturbations_df
 
     mean_perturbations_barplot(mean_perturbations_df)
 

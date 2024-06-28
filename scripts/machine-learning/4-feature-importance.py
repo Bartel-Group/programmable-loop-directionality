@@ -10,17 +10,21 @@ from sklearn.inspection import permutation_importance
 SEED = 17
 CSVS_DIR = os.path.join("..", "..", "data", "csvs")
 PKLS_DIR = os.path.join("..", "..", "data", "pkls")
+FIGS_DIR = os.path.join("..", "..", "figures")
 
 
-def create_bar_plot(y_values, x_values, title="", xlabel="", ylabel=""):
+def create_bar_plot(
+    y_values, x_values, title="", xlabel="", ylabel="", filename="barplot.png"
+):
     fig, ax = plt.subplots(figsize=(6, 4))
 
-    ax.barh(x_values, y_values)
+    ax.barh(x_values, y_values, color="#003f5c", edgecolor="black", linewidth=0.5)
 
     plt.title(title)
     plt.xlabel(xlabel, fontsize=12)
-
     plt.ylabel(ylabel, fontsize=12)
+
+    plt.savefig(os.path.join(FIGS_DIR, "figure5", filename), dpi=300)
     plt.show()
 
     return None
@@ -116,6 +120,10 @@ def main():
 
             if type_ == "clf":
 
+                filename = os.path.join(
+                    FIGS_DIR, "figure4", f"{tag}-{type_}-feature-importance.png"
+                )
+
                 df = map_target(
                     df_orig,
                     target="loop-tof",
@@ -141,6 +149,10 @@ def main():
                 )
 
             elif type_ == "reg":
+
+                filename = os.path.join(
+                    FIGS_DIR, "figure7", f"{tag}-{type_}-feature-importance.png"
+                )
 
                 df_copy = df_orig.copy()
                 condition = (df_copy["loop-tof"] <= -1e-4) | (
@@ -218,6 +230,7 @@ def main():
                 y,
                 title="",
                 xlabel="Feature Importance",
+                filename=filename,
             )
 
     return None
