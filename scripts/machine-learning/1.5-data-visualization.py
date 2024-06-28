@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 CSVS_DIR = os.path.join("..", "..", "data", "csvs")
 FIGS_DIR = os.path.join("..", "..", "figures")
@@ -134,12 +135,12 @@ def plot_histogram(df, filename="TOF_histogram.png"):
     ax[0].hist(
         pos_df["loop-tof"], bins, color="#2f4b7c", linewidth=1.0, edgecolor="black"
     )
-    ax[0].legend(labels=["Positive"], fontsize=20, loc="upper right", frameon=False)
+    ax[0].legend(labels=["Positive"], fontsize=28, loc="upper right", frameon=False)
 
     ax[1].hist(
         -neg_df["loop-tof"], bins, color="#ffa600", linewidth=1.0, edgecolor="black"
     )
-    ax[1].legend(labels=["Negative"], fontsize=20, loc="lower right", frameon=False)
+    ax[1].legend(labels=["Negative"], fontsize=28, loc="lower right", frameon=False)
 
     for k in range(2):
         ax[k].set_xlim([5 * 1e-5, 1e2])
@@ -153,7 +154,7 @@ def plot_histogram(df, filename="TOF_histogram.png"):
         ha="center",
         va="center",
         rotation="vertical",
-        fontsize=24,
+        fontsize=28,
     )
 
     ax[0].tick_params(
@@ -180,7 +181,7 @@ def plot_histogram(df, filename="TOF_histogram.png"):
 
     ax[1].set_ylim([1, 1e4])
     ax[1].invert_yaxis()
-    ax[1].set_xlabel(f"Loop TOF " r"$(s^{-1})$", fontsize=24)
+    ax[1].set_xlabel(f"Loop TOF " r"$(s^{-1})$", fontsize=28)
     ax[1].tick_params(
         which="major",
         axis="both",
@@ -220,7 +221,7 @@ def plot_BEA_histogram(df, filename="BEA_histogram.png"):
         bins=bins,
         histtype="step",
         color=colors[0],
-        linewidth=2.0,
+        linewidth=3.0,
         edgecolor=colors[0],
         align="mid",
         alpha=1,
@@ -231,7 +232,7 @@ def plot_BEA_histogram(df, filename="BEA_histogram.png"):
         bins=bins,
         histtype="step",
         color=colors[1],
-        linewidth=2.0,
+        linewidth=3.0,
         edgecolor=colors[1],
         align="mid",
         alpha=1,
@@ -242,7 +243,7 @@ def plot_BEA_histogram(df, filename="BEA_histogram.png"):
         bins=bins,
         histtype="step",
         color=colors[2],
-        linewidth=2.0,
+        linewidth=3.0,
         edgecolor=colors[2],
         align="mid",
         alpha=1,
@@ -265,17 +266,8 @@ def plot_BEA_histogram(df, filename="BEA_histogram.png"):
         direction="out",
         right=True,
         top=True,
-        bottom=False,
+        bottom=True,
         length=6,
-        width=1.5,
-    )
-    ax.tick_params(
-        which="minor",
-        axis="both",
-        direction="out",
-        right=False,
-        top=False,
-        length=4,
         width=1.5,
     )
 
@@ -289,6 +281,7 @@ def plot_BEA_histogram(df, filename="BEA_histogram.png"):
         loc="upper right",
     )
 
+    ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
     ax.set_xlabel(f"Loop TOF " r"$(s^{-1})$", fontsize=24)
     ax.set_xlim([-55, 55])
     ax.set_ylim([1 * 10**-5, 1 * 10**-2])

@@ -104,6 +104,7 @@ def main():
         mean_perturbations_dict[f"{start}_to_{desired}"] = mean_values
 
     mean_perturbations_df = pd.DataFrame(mean_perturbations_dict)
+    return mean_perturbations_df
 
     mean_perturbations_barplot(mean_perturbations_df)
 
