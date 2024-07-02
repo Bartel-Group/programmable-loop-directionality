@@ -133,11 +133,11 @@ def plot_hexbin(true_vals, predicted_vals, params, filename="parity-plot.png"):
     grid.ax_joint.set_ylim(4 * 10**-5, 3 * 10**2)
     grid.ax_joint.set_xticks(np.logspace(-4, 2, num=7))
     grid.ax_joint.set_yticks(np.logspace(-4, 2, num=7))
-    grid.ax_joint.set_xlabel(r"$|TOF_{pred}|$" + " " + r"$(s^{-1})$", size=28)
-    grid.ax_joint.set_ylabel(r"$|TOF_{true}|$" + " " + r"$(s^{-1})$", size=28)
+    grid.ax_joint.set_xlabel(r"$|TOF_{pred}|$" + " " + r"$(s^{-1})$", size=24)
+    grid.ax_joint.set_ylabel(r"$|TOF_{true}|$" + " " + r"$(s^{-1})$", size=24)
 
     grid.figure.set_figwidth(12)
-    grid.figure.set_figheight(7.5)
+    grid.figure.set_figheight(9)
 
     plt.subplots_adjust(left=0.2, right=0.8, top=0.8, bottom=0.2)
     cbar_ax = grid.figure.add_axes([0.80, 0.20, 0.02, 0.5])  # x, y, width, height
@@ -197,11 +197,13 @@ def check_reg_errors(
     rmse = np.sqrt(mean_squared_error(y_true, y))
     mae = mean_absolute_error(y_true, y)
     median_abs_err = np.median(np.abs(y_true - y))
+    seventyfifth_percentile = np.percentile(np.abs(y_true - y), 75)
 
     print(f"Model: {model_file}")
     print(f"RMSE: {rmse}")
     print(f"MAE: {mae}")
     print(f"Median AE: {median_abs_err}")
+    print(f"75th Percentile AE: {seventyfifth_percentile}")
     print("------------------")
 
     if check_baseline:
@@ -209,6 +211,7 @@ def check_reg_errors(
         mean_baseline_pred = np.full(len(y_true), mean_baseline)
 
         med_baseline = np.median(y_true)
+        print(f"Median: {med_baseline}")
         med_baseline_pred = np.full(len(y_true), med_baseline)
 
         rmse_baseline = np.sqrt(mean_squared_error(y_true, mean_baseline_pred))

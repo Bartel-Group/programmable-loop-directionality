@@ -195,22 +195,22 @@ def main():
 
             if tag == "op":
                 y = [
-                    r"$\alpha_a$",
-                    r"$\alpha_c$",
-                    r"$\alpha_b$",
-                    r"$\Delta BE_a$",
-                    r"$\gamma_{c-a}$",
-                    r"$\gamma_{b-a}$",
-                    r"$\delta_{c-a}$",
-                    r"$\delta_{b-a}$",
-                    r"$\beta_b$",
-                    r"$\beta_a$",
-                    r"$\beta_c$",
+                    r"$\alpha_A$",
+                    r"$\alpha_C$",
+                    r"$\alpha_B$",
+                    r"$\Delta BE_A$",
+                    r"$\gamma_{C-A}$",
+                    r"$\gamma_{B-A}$",
+                    r"$\delta_{C-A}$",
+                    r"$\delta_{B-A}$",
+                    r"$\beta_B$",
+                    r"$\beta_A$",
+                    r"$\beta_C$",
                 ]
 
             if tag == "rc":
                 y = [
-                    r"$\Delta BE_a$",
+                    r"$\Delta BE_A$",
                     r"$k_{-" + str(1) + r"," + str(2) + r"}$",
                     r"$k_{-" + str(3) + r"," + str(1) + r"}$",
                     r"$k_{" + str(1) + r"," + str(1) + r"}$",

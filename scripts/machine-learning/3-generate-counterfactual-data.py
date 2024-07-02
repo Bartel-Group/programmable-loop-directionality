@@ -147,21 +147,11 @@ def main():
                 counterfactual_df = pd.DataFrame(counterfactual_array, columns=features)
                 query_inst_df = pd.DataFrame(query_inst_array, columns=features)
 
-                data_file1 = os.path.join(
+                data_file = os.path.join(
                     CSVS_DIR,
                     f"counterfactual-perturbations-{start_class}-to-{desired_class}.csv",
                 )
                 perturbation_df.to_csv(data_file1, index=False)
-
-                data_file2 = os.path.join(
-                    CSVS_DIR, f"counterfactuals-{start_class}-to-{desired_class}.csv"
-                )
-                counterfactual_df.to_csv(data_file2, index=False)
-
-                data_file3 = os.path.join(
-                    CSVS_DIR, f"query-instances-{start_class}-to-{desired_class}.csv"
-                )
-                query_inst_df.to_csv(data_file3, index=False)
 
     return None
 

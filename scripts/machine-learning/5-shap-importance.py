@@ -3,6 +3,7 @@ import shap
 import joblib
 import numpy as np
 import pandas as pd
+import pickle as pkl
 import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
@@ -84,7 +85,7 @@ def split_train_test(
 def main():
 
     data_types = ["op"]
-    model_types = ["clf", "reg"]
+    model_types = ["clf"]
 
     for tag in data_types:
 
@@ -146,7 +147,7 @@ def main():
                     df,
                     target="log-loop-tof",
                     features=features,
-                    test_size=0.10,
+                    test_size=0.01,
                     random_state=SEED,
                     check_shape=False,
                 )
@@ -155,40 +156,69 @@ def main():
                 )
 
             feature_names = [
-                r"$\alpha_a$",
-                r"$\alpha_b$",
-                r"$\alpha_c$",
-                r"$\beta_a$",
-                r"$\beta_b$",
-                r"$\beta_c$",
-                r"$\gamma_{b-a}$",
-                r"$\gamma_{c-a}$",
-                r"$\delta_{b-a}$",
-                r"$\delta_{c-a}$",
-                r"$\Delta BE_a$",
+                r"$\alpha_A$",
+                r"$\alpha_B$",
+                r"$\alpha_C$",
+                r"$\beta_A$",
+                r"$\beta_B$",
+                r"$\beta_C$",
+                r"$\gamma_{B-A}$",
+                r"$\gamma_{C-A}$",
+                r"$\delta_{B-A}$",
+                r"$\delta_{C-A}$",
+                r"$\Delta BE_A$",
             ]
 
             explainer = shap.Explainer(best_model)
             shap_values = explainer(X_test)
 
             if type_ == "clf":
-                shap.summary_plot(
-                    shap_values[:, :, 0], feature_names=feature_names, show=False
+
+                fig = plt.figure(figsize=(12, 12))
+
+                ax = plt.subplot(2, 2, 1)
+                ax = pkl.load(
+                    open(
+                        os.path.join(pkls_subdir, "clf-op-feature-importance-ax.pkl"),
+                        "rb",
+                    )
                 )
-                plt.title("Class 0: Zero loop TOF")
-                plt.show()
-                shap.summary_plot(
-                    shap_values[:, :, 1], feature_names=feature_names, show=False
+
+                ax = plt.subplot(2, 2, 2)
+                ax = shap.summary_plot(
+                    shap_values[:, :, 0],
+                    feature_names=feature_names,
+                    show=False,
                 )
-                plt.title("Class 1: Positive loop TOF")
-                plt.show()
-                shap.summary_plot(
-                    shap_values[:, :, 2], feature_names=feature_names, show=False
+                ax = plt.title("Class 0: Zero loop TOF")
+
+                ax = plt.subplot(2, 2, 3)
+                ax = shap.summary_plot(
+                    shap_values[:, :, 1],
+                    feature_names=feature_names,
+                    show=False,
                 )
-                plt.title("Class 2: Negative loop TOF")
-                plt.show()
+                ax = plt.title("Class 1: Positive loop TOF")
+
+                ax = plt.subplot(2, 2, 4)
+                ax = shap.summary_plot(
+                    shap_values[:, :, 2],
+                    feature_names=feature_names,
+                    show=False,
+                )
+                ax = plt.title("Class 2: Negative loop TOF")
+                ax = plt.savefig(
+                    os.path.join(FIGS_DIR, "figure4", "class-2-shap-op.png"), dpi=600
+                )
+                ax = plt.show()
+
             elif type_ == "reg":
-                shap.summary_plot(shap_values, feature_names=feature_names)
+
+                shap.summary_plot(shap_values, feature_names=feature_names, show=False)
+                plt.savefig(
+                    os.path.join(FIGS_DIR, "figure7", "reg-shap-op.png"), dpi=300
+                )
+                plt.show()
 
     return None
 

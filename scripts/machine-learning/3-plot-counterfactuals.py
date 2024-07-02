@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 
 CSVS_DIR = os.path.join("..", "..", "data", "csvs")
 FIGS_DIR = os.path.join("..", "..", "figures")
@@ -36,7 +37,7 @@ def set_rc_params():
         "xtick.top": True,
         "ytick.right": True,
         "axes.edgecolor": "black",
-        "figure.figsize": [6, 4],
+        "figure.figsize": [12, 8],
     }
     for p in params:
         mpl.rcParams[p] = params[p]
@@ -70,11 +71,20 @@ def mean_perturbations_barplot(
 
     fig, ax = plt.subplots()
 
-    mean_perturbations_df.plot(kind="barh", color=colors, ax=ax)
+    mean_perturbations_df.plot(kind="barh", color=colors, ax=ax, edgecolor="black")
 
-    plt.xticks(rotation=0)
-    plt.xlabel("Mean Perturbation")
+    ax.tick_params(
+        which="minor",
+        axis="x",
+        direction="out",
+        right=False,
+        top=False,
+        length=4,
+        width=1.5,
+    )
+    ax.xaxis.set_minor_locator(ticker.AutoMinorLocator())
 
+    plt.xlabel("Mean Perturbation (Normalized)")
     plt.legend(labels, loc="upper right")
 
     plt.savefig(os.path.join(FIGS_DIR, "figure5", filename), dpi=300)
@@ -84,6 +94,8 @@ def mean_perturbations_barplot(
 
 
 def main():
+
+    set_rc_params()
 
     start_classes = [1, 2, 0]
     desired_classes = [2, 1, 1]
@@ -97,20 +109,54 @@ def main():
         perturbations_df = load_csv(
             f"counterfactual-perturbations-{start}-to-{desired}.csv"
         )
-        mean_values = perturbations_df.mean()
 
-        alpha_mean_values = mean_values[["alpha-a", "alpha-b", "alpha-c"]].mean()
-        alpha_std = mean_values[["alpha-a", "alpha-b", "alpha-c"]].std()
-        beta_mean_values = mean_values[["beta-a", "beta-b", "beta-c"]].mean()
-        gamma_mean_values = mean_values[["gamma-b-a", "gamma-c-a"]].mean()
-        delta_mean_values = mean_values[["delta-b-a", "delta-c-a"]].mean()
+        perturbations_df = perturbations_df.replace(0.0, np.nan)
+
+        stacked_alpha_values = (
+            perturbations_df[["alpha-a", "alpha-b", "alpha-c"]]
+            .stack(dropna=True)
+            .reset_index(drop=True)
+        )
+        stacked_beta_values = (
+            perturbations_df[["beta-a", "beta-b", "beta-c"]]
+            .stack(dropna=True)
+            .reset_index(drop=True)
+        )
+        stacked_gamma_values = (
+            perturbations_df[["gamma-b-a", "gamma-c-a"]]
+            .stack(dropna=True)
+            .reset_index(drop=True)
+        )
+        stacked_delta_values = (
+            perturbations_df[["delta-b-a", "delta-c-a"]]
+            .stack(dropna=True)
+            .reset_index(drop=True)
+        )
+
+        alpha_mean_values = stacked_alpha_values.mean()
+        beta_mean_values = stacked_beta_values.mean()
+        gamma_mean_values = stacked_gamma_values.mean()
+        delta_mean_values = stacked_delta_values.mean()
+        bea_mean_values = perturbations_df["change-in-bea"].dropna().mean()
+
+        alpha_range = 0.7
+        beta_range = 0.6
+        gamma_range = 1.2
+        delta_range = 1.0
+        bea_range = 0.5
+
+        normalized_alpha_mean_values = alpha_mean_values / alpha_range
+        normalized_beta_mean_values = beta_mean_values / beta_range
+        normalized_gamma_mean_values = gamma_mean_values / gamma_range
+        normalized_delta_mean_values = delta_mean_values / delta_range
+        normalized_bea_mean_values = bea_mean_values / bea_range
 
         mean_perturbations_dict[f"{start}_to_{desired}"] = {
-            r"$\alpha_i$": alpha_mean_values,
-            r"$\beta_i$": beta_mean_values,
-            r"$\gamma_{i-j}$": gamma_mean_values,
-            r"$\delta_{i-j}$": delta_mean_values,
-            r"$\Delta BE_A$": mean_values["change-in-bea"],
+            r"$\alpha_i$": normalized_alpha_mean_values,
+            r"$\beta_i$": normalized_beta_mean_values,
+            r"$\gamma_{i-j}$": normalized_gamma_mean_values,
+            r"$\delta_{i-j}$": normalized_delta_mean_values,
+            r"$\Delta BE_A$": normalized_bea_mean_values,
         }
 
     mean_perturbations_df = pd.DataFrame(mean_perturbations_dict)
