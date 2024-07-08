@@ -1,11 +1,49 @@
 # programmable-loop-directionality
 
-Github repository including the data, figures, and scripts used in Murphy et. al Catalytic Resonance Theory: Forecasting the Flow of Programmable Catalytic Loops
+This repository exists to share the data and scripts used in the paper "Catalytic Resonance Theory: Forecasting the Flow of Programmable Catalytic Loops" by Madeline Murphy, Kyle Noordhoek, Sallye Gathmann, Paul Dauenhauer, and Christopher Bartel.
 
-Three folders exist to separate the files used in generating the paper:
+-------------------
 
-    data: includes .csv and .pkl files of the simulation data (outputs), input parameter files, grid searches, and best estimators
-    
-    figures: includes .png files of all figures displayed in the manuscript (and some additional figures for the RC models)
-    
-    scripts: includes the necessary scripts and notebooks used to run the loop simulation, train ML models, and generate figure results or values reported in the paper
+General Information
+-------------------
+
+Principal Investigator Contact Information
+
+    Name: Paul Dauenhauer
+            University of Minnesota
+            <hauer@umn.edu>
+            Room 484
+            421 Washington Avenue SE
+            Minneapolis, MN 55455
+    Name: Christopher Bartel
+            University of Minnesota
+            <cbartel@umn.edu>
+            Room 485
+            421 Washington Avenue SE
+            Minneapolis, MN 55455
+
+Co-investigator Contact Information:
+
+    Madeline Murphy
+            University of Minnesota
+            <murp1677@umn.edu>
+    Kyle Noordhoek
+            University of Minnesota
+            <noord014@umn.edu>
+
+Date Published or finalized for release 2024-06
+
+Date of data collection: 2023-07 through 2024-03
+
+-------------------
+
+Description
+-------------------
+
+Three primary folders exist to separate the files used in generating the paper:
+
+    Figures: Includes any (individual) plots which appear in the paper
+
+    Machine-learning: includes the data and scripts used to generate and analyze the machine learning models
+
+    Microkinetic-modeling: includes the data and scripts used to set-up/run the microkinetic models and generate the microkinetic model results (pre-machine learning analysis)
