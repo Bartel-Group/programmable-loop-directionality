@@ -3,7 +3,7 @@ import shap
 import joblib
 import numpy as np
 import pandas as pd
-import pickle as pkl
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 from sklearn.model_selection import train_test_split
@@ -12,6 +12,29 @@ SEED = 17
 TRAINING_DATA_DIR = os.path.join("..", "training-data")
 MODELS_DIR = os.path.join("..", "grid-search-results")
 FIGS_DIR = os.path.join("..", "..", "figures")
+
+
+def set_rc_params():
+    """
+    Args:
+
+    Returns:
+        dictionary of settings for mpl.rcParams
+    """
+    params = {
+        "axes.linewidth": 2,
+        "axes.unicode_minus": False,
+        "font.size": 12,
+        "figure.dpi": 300,
+        "font.family": "arial",
+        "legend.frameon": False,
+        "savefig.bbox": "tight",
+        "axes.edgecolor": "black",
+        "figure.figsize": [10, 10],
+    }
+    for p in params:
+        mpl.rcParams[p] = params[p]
+    return params
 
 
 def load_csv(filename, data_dir=TRAINING_DATA_DIR):
@@ -84,8 +107,10 @@ def split_train_test(
 
 def main():
 
+    set_rc_params()
+
     data_types = ["op"]
-    model_types = ["clf"]
+    model_types = ["clf", "reg"]
 
     for tag in data_types:
 

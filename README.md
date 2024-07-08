@@ -47,3 +47,5 @@ Three primary folders exist to separate the files used in generating the paper:
     Machine-learning: includes the data and scripts used to generate and analyze the machine learning models
 
     Microkinetic-modeling: includes the data and scripts used to set-up/run the microkinetic models and generate the microkinetic model results (pre-machine learning analysis)
+
+Each folder contains a README.md file that provides a brief overview of the data and scripts contained within.
