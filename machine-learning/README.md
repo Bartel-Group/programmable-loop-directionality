@@ -5,7 +5,7 @@
 Overview of the data
 --------------------
 
-This folder includes scripts and data files used to train and evaluate machine learning models on the microkinetic data generated from the loop simulation. The `xgb_env.yaml` file is included such that anyone may recreate the environment used to generate the machine learning results. Rate constant models and grid searches are provided, though not thoroughly dicussed in the manuscript. Further analysis of the rate constant (`rc`) models is possible by including the `rc` model_tag in the main function of the analysis scripts. Finally, the .py files in `scripts` are meant to be run in the order they are numbered (i.e. one may run any of the scripts beginning in `3-` after running `1-` and `2-`, but should not run `3-` before all of `1-` and `2-`).
+This folder includes scripts and data files used to train and evaluate machine learning models on the microkinetic data generated from the loop simulation. The `xgb_env.yml` file is included such that anyone may recreate the environment used to generate the machine learning results. Rate constant models and grid searches are provided, though not thoroughly dicussed in the manuscript. Further analysis of the rate constant (`rc`) models is possible by including the `rc` model_tag in the main function of the analysis scripts. Finally, the .py files in `scripts` are meant to be run in the order they are numbered (i.e. one may run any of the scripts beginning in `3-` after running `1-` and `2-`, but should not run `3-` before all of `1-` and `2-`).
 
 --------------------------
 
