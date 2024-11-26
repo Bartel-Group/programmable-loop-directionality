@@ -31,7 +31,7 @@ Co-investigator Contact Information:
             University of Minnesota
             <noord014@umn.edu>
 
-Date Published or finalized for release 2024-06
+Date Published or finalized for release 2024-11
 
 Date of data collection: 2023-07 through 2024-03
 
@@ -48,4 +48,4 @@ Three primary folders exist to separate the files used in generating the paper:
 
     Microkinetic-modeling: includes the data and scripts used to set-up/run the microkinetic models and generate the microkinetic model results (pre-machine learning analysis)
 
-Each folder contains a README.md file that provides a brief overview of the data and scripts contained within.
+Each folder contains a README.md file that provides additional information related to the data and scripts contained within.

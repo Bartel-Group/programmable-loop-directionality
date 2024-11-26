@@ -34,46 +34,49 @@ SUBFOLDER/FILE OVERVIEW
             Description: A histogram with a linear x-axis and log-scale y-axis. Histogram plots the fraction of outputs of the converged loop simulations to show the loop turnover frequency values observed across the results. The outputs are sectioned into different line colors based on the amplitude of catalyst oscillation imposed in the simulation. The histogram is zoomed to emphasize the larger magnitude loop TOF values.
 
    \
-   Figure 4: Permutation Feature Importance and SHAP Analysis of the XGBClassifier
+   Figure 4: Permutation Feature Importance and SHAP Analysis of the RF Classifier and XGB Classifier Models
 
-         A. Filename: class-0-shap-op.png
+         A. Filename: {model_architecture}-class-0-shap-op.png
           Description: SHAP summary plot for dimension zero of the output shap values. Dimension zero corresponds with class zero (zero loop TOF output).
 
-         B. Filename: class-1-shap-op.png
+         B. Filename: {model_architecture}-class-1-shap-op.png
             Description: SHAP summary plot for dimension one of the output shap values. Dimension one corresponds with class one (positive loop TOF output).
 
-         C. Filename: class-2-shap-op.png
+         C. Filename: {model_architecture}-class-2-shap-op.png
             Description: SHAP summary plot for dimension two of the output shap values. Dimension two corresponds with class two (negative loop TOF output).
 
-         D. Filename: combined-clf-shap-op.png
-            Description: Combined summary plot which appears in the manuscript. (Manual combination of the three SHAP summary plots for the output classes and the PFI results for the original parameter XGBClassifier model)
+         D. Filename: {model_architecture}-combined-op-clf-shap.png
+            Description: Combined summary plot which appears in the manuscript. (Manual combination of the three SHAP summary plots for the output classes and the PFI results for the original parameter classifier model with the given architecture)
 
-         E. Filename: op-clf-feature-importance.png
-            Description: Permutation Feature Importance (PFI) results for the original parameter XGBClassifier.
-
-   \
-   Figure 5: Counterfactuals of the OP XGBClassifier Model
-
-      A. Filename: mean-perturbations-barplot.png
-         Description: counterfactual mean perturbations for the three transformations considered, for each feature, having been normalized to the range of the specified feature.
+         E. Filename: {model_architecture}-op-clf-feature-importance.png
+            Description: Permutation Feature Importance (PFI) results for the original parameter classifier with the given architecture.
 
    \
-   Figure 6: Parity Plots for the XGBRegressors
+   Figure 5: Counterfactuals of the OP- RF Classifier and XGB Classifier Models
 
-      A. Filename: op-parity-plot.png
-         Description: log-scale (hex-bin) parity plot of the prediciton results of the Original Parameter XGB Regressor, with the color of the hex-bins representing the density of points (also shown in the sidebars of the plot).
-
-      B. Filename: rc-parity-plot.png
-         Description: log-scale (hex-bin) parity plot of the prediciton results of the Rate Constants XGB Regressor, with the color of the hex-bins representing the density of points (also shown in the sidebars of the plot).
+      A. Filename: {model_architecture}-mean-perturbations-barplot.png
+         Description: Counterfactual mean perturbations for the three transformations considered, for each feature, having been normalized to the range of the specified feature. The bar plot shows the mean perturbation values for the classifier model with the given architecture.
 
    \
-   Figure 7: Permutation Feature Importance and SHAP analysis on the XGBRegressor model
+   Figure 6: Parity Plots for the RF Regressor and XGB Regressor Models
 
-      A. Filename: combined-reg-shap-op.png
-         Description: Combined summary plot which appears in the manuscript. (Manual combination of the single SHAP summary plot and the PFI results for the original parameter XGBRegression model)
+      A. Filename: {model_architecture}-combined-parity-plot.png
+         Description: Combined parity plot which appears in the manuscript/SI. (Manual combination of the parity plots for the original parameter regressor and the rate constants regressor with the given architecture)
+      
+      B. Filename: {model_architecture}-op-parity-plot.png
+         Description: Log-scale (hex-bin) parity plot of the prediciton results of the Original Parameter regressor with the given architecture. The color of the hex-bins represents the density of points (also shown in the sidebars of the plot).
 
-      B. Filename: op-reg-feature-importance.png
-         Description: Permutation Feature Importance (PFI) results for the original parameter XGBRegressor.
+      C. Filename: {model_architecture}-rc-parity-plot.png
+         Description: Log-scale (hex-bin) parity plot of the prediciton results of the Rate Constants regressor with the given architecture. The color of the hex-bins representing the density of points (also shown in the sidebars of the plot).
 
-      C. Filename: reg-shap-op.png
-         Description: SHAP summary plot for the output shap values of the XGBRegressor model.
+   \
+   Figure 7: Permutation Feature Importance and SHAP Analysis on the RF Regressor and XGB Regressor Models
+
+      A. Filename: {model_architecture}-combined-op-reg-shap.png
+         Description: Combined summary plot which appears in the manuscript/SI. (Manual combination of the single SHAP summary plot and the PFI results for the original parameter regression model with the given architecture)
+
+      B. Filename: {model_architecture}-op-reg-feature-importance.png
+         Description: Permutation Feature Importance (PFI) results for the original parameter regressor with the given architecture.
+
+      C. Filename: {model_architecture}-reg-shap-op.png
+         Description: SHAP summary plot for the output shap values of the regressor model with the given architecture.

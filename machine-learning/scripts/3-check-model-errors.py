@@ -247,20 +247,25 @@ def check_reg_errors(
     print("------------------")
 
     if check_baseline:
-        mean_baseline = np.mean(y_true)
+        mean_baseline = np.mean(Y_train)
+        print(f"Mean: {mean_baseline}")
         mean_baseline_pred = np.full(len(y_true), mean_baseline)
 
-        med_baseline = np.median(y_true)
+        med_baseline = np.median(Y_train)
         print(f"Median: {med_baseline}")
         med_baseline_pred = np.full(len(y_true), med_baseline)
 
         rmse_baseline = np.sqrt(mean_squared_error(y_true, mean_baseline_pred))
         mae_baseline = mean_absolute_error(y_true, mean_baseline_pred)
         median_abs_err_baseline = np.median(np.abs(y_true - med_baseline_pred))
+        seventyfifth_percentile_baseline = np.percentile(
+            np.abs(y_true - mean_baseline_pred), 75
+        )
 
         print(f"Baseline RMSE: {rmse_baseline}")
         print(f"Baseline MAE: {mae_baseline}")
         print(f"Baseline Median AE: {median_abs_err_baseline}")
+        print(f"Baseline 75th Percentile AE: {seventyfifth_percentile_baseline}")
         print("------------------")
         print("\n")
 
@@ -272,7 +277,10 @@ def check_reg_errors(
             y_true,
             y,
             params=set_rc_params(),
-            filename=model_file.split("_")[2].split("-")[0] + "-parity-plot.png",
+            filename=model_file.split("_")[0]
+            + "-"
+            + model_file.split("_")[2].split("-")[0]
+            + "-parity-plot.png",
         )
 
     return None
@@ -384,25 +392,27 @@ def check_clf_errors(model_file, data_file, use_test_set=False, check_baseline=F
 
 def main():
 
-    model_type = ["reg", "clf"]
-    data_type = ["rc", "op"]
+    base_model = ["xgb", "rf", "sgd"]
+    model_type = ["clf", "reg"]
+    data_type = ["op", "rc"]
 
     for m in model_type:
         for d in data_type:
-            model_file = f"xgb_{m}_{d}-best-estm.pkl"
-            data_file = f"ml_data_{d}_steady.csv"
-            if m == "reg":
-                check_reg_errors(
-                    model_file,
-                    data_file,
-                    use_test_set=True,
-                    check_baseline=True,
-                    parity_plot=True,
-                )
-            elif m == "clf":
-                check_clf_errors(
-                    model_file, data_file, use_test_set=True, check_baseline=True
-                )
+            for b in base_model:
+                model_file = f"{b}_{m}_{d}-best-estm.pkl"
+                data_file = f"ml_data_{d}_steady.csv"
+                if m == "reg":
+                    check_reg_errors(
+                        model_file,
+                        data_file,
+                        use_test_set=True,
+                        check_baseline=True,
+                        parity_plot=True,
+                    )
+                elif m == "clf":
+                    check_clf_errors(
+                        model_file, data_file, use_test_set=True, check_baseline=True
+                    )
 
     return None
 

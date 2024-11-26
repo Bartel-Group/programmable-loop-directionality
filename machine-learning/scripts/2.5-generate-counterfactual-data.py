@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 
 SEED = 17
-COUNTERFACTUAL_RESULTS_DIR = os.path.join("..", "counterfactual-results")
+FEATURE_IMPORTANCE_RESULTS_DIR = os.path.join("..", "feature-importance-results")
 TRAINING_DATA_DIR = os.path.join("..", "training-data")
 MODELS_DIR = os.path.join("..", "grid-search-results")
 FIGS_DIR = os.path.join("..", "..", "figures")
@@ -98,73 +98,80 @@ def generate_counterfactual_perturbations(query_instance, exp, num_cfs, desired_
 
 def main():
 
+    base_model = ["xgb", "rf"]
     model_type = ["clf"]
     data_type = ["op"]
 
     for m in model_type:
         for d in data_type:
-            model_file = f"xgb_{m}_{d}-best-estm.pkl"
-            data_file = f"ml_data_{d}_steady.csv"
-
-            model = load_best_model(model_file)
-            df_orig = load_csv(data_file)
-
-            columns = list(df_orig)
-            target = "direction"
-            non_features = ["steady-state-condition", "loop-tof"]
-            features = [f for f in columns if f not in non_features]
-
-            df_map = map_target(
-                df_orig,
-                target="loop-tof",
-                new_target_name="direction",
-                encoding=lambda x: (
-                    1
-                    if float("inf") > x >= 1e-4
-                    else 2 if -float("inf") < x <= -1e-4 else 0
-                ),
-            )
-
-            df = df_map.drop(columns=non_features, axis=1)
-
-            train_dataset, test_dataset, _, _ = train_test_split(
-                df, df[target], test_size=0.1, random_state=SEED
-            )
-
-            exp = init_dice(df=train_dataset, model=model, features=features)
-            pos_df, neg_df, zero_df = split_by_direction(test_dataset)
-
-            start_dfs = [pos_df, neg_df, zero_df]
-            start_classes = [1, 2, 0]
-            desired_classes = [2, 1, 1]
-
-            zipped = zip(start_dfs, start_classes, desired_classes)
-
-            for df, start_class, desired_class in zipped:
-                df = df.sample(frac=1).drop(columns=target, axis=1)
-                length = len(df)
-
-                query_inst_array = np.zeros((length, len(features)))
-                counterfactual_array = np.zeros((10 * length, len(features)))
-                perturbation_array = np.zeros((length, len(features)))
-
-                for i in range(length):
-                    (
-                        counterfactual_array[(i * 10) : ((i + 1) * 10), :],
-                        perturbation_array[i, :],
-                        query_inst_array[i, :],
-                    ) = generate_counterfactual_perturbations(
-                        df[i : i + 1], exp, num_cfs=10, desired_class=desired_class
+            for b in base_model:
+                if b == "rf":
+                    MODELS_DIR = os.path.join(
+                        "..", "grid-search-results", "labeled-rf-models"
                     )
 
-                perturbation_df = pd.DataFrame(perturbation_array, columns=features)
+                model_file = f"{b}_{m}_{d}-best-estm.pkl"
+                data_file = f"ml_data_{d}_steady.csv"
 
-                data_file = os.path.join(
-                    COUNTERFACTUAL_RESULTS_DIR,
-                    f"counterfactual-perturbations-{start_class}-to-{desired_class}.csv",
+                model = load_best_model(model_file)
+                df_orig = load_csv(data_file)
+
+                columns = list(df_orig)
+                target = "direction"
+                non_features = ["steady-state-condition", "loop-tof"]
+                features = [f for f in columns if f not in non_features]
+
+                df_map = map_target(
+                    df_orig,
+                    target="loop-tof",
+                    new_target_name="direction",
+                    encoding=lambda x: (
+                        1
+                        if float("inf") > x >= 1e-4
+                        else 2 if -float("inf") < x <= -1e-4 else 0
+                    ),
                 )
 
-                perturbation_df.to_csv(data_file, index=False)
+                df = df_map.drop(columns=non_features, axis=1)
+
+                train_dataset, test_dataset, _, _ = train_test_split(
+                    df, df[target], test_size=0.1, random_state=SEED
+                )
+
+                exp = init_dice(df=train_dataset, model=model, features=features)
+                pos_df, neg_df, zero_df = split_by_direction(test_dataset)
+
+                start_dfs = [pos_df, neg_df, zero_df]
+                start_classes = [1, 2, 0]
+                desired_classes = [2, 1, 1]
+
+                zipped = zip(start_dfs, start_classes, desired_classes)
+
+                for df, start_class, desired_class in zipped:
+                    df = df.sample(frac=1).drop(columns=target, axis=1)
+                    length = len(df)
+
+                    query_inst_array = np.zeros((length, len(features)))
+                    counterfactual_array = np.zeros((10 * length, len(features)))
+                    perturbation_array = np.zeros((length, len(features)))
+
+                    for i in range(length):
+                        (
+                            counterfactual_array[(i * 10) : ((i + 1) * 10), :],
+                            perturbation_array[i, :],
+                            query_inst_array[i, :],
+                        ) = generate_counterfactual_perturbations(
+                            df[i : i + 1], exp, num_cfs=10, desired_class=desired_class
+                        )
+
+                    perturbation_df = pd.DataFrame(perturbation_array, columns=features)
+
+                    data_file = os.path.join(
+                        FEATURE_IMPORTANCE_RESULTS_DIR,
+                        f"{b}-counterfactual-perturbations-{start_class}-to-{desired_class}.csv",
+                    )
+
+                    perturbation_df.to_csv(data_file, index=False)
 
     return None
 

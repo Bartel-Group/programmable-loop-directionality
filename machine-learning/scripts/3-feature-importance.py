@@ -2,6 +2,7 @@ import os
 import joblib
 import numpy as np
 import pandas as pd
+import pickle as pkl
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -9,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.inspection import permutation_importance
 
 SEED = 17
+FEATURE_IMPORTANCE_RESULTS_DIR = os.path.join("..", "feature-importance-results")
 TRAINING_DATA_DIR = os.path.join("..", "training-data")
 MODELS_DIR = os.path.join("..", "grid-search-results")
 FIGS_DIR = os.path.join("..", "..", "figures")
@@ -126,136 +128,154 @@ def main():
 
     set_rc_params()
 
+    base_model = ["xgb", "rf"]
     data_types = ["op"]
     model_types = ["clf", "reg"]
 
-    for tag in data_types:
-        print(f"Processing {tag} data")
+    for b in base_model:
+        for tag in data_types:
+            print(f"Processing {tag} data")
 
-        df_orig = load_csv(filename="ml_data_" + tag + "_steady.csv")
+            df_orig = load_csv(filename="ml_data_" + tag + "_steady.csv")
 
-        columns = list(df_orig)
-        targets = ["loop-tof"]
-        non_features = ["steady-state-condition"]
-        features = [f for f in columns if f not in targets + non_features]
+            columns = list(df_orig)
+            targets = ["loop-tof"]
+            non_features = ["steady-state-condition"]
+            features = [f for f in columns if f not in targets + non_features]
 
-        for type_ in model_types:
-            print(f"Processing {type_} model")
+            for type_ in model_types:
+                print(f"Processing {type_} model")
 
-            if type_ == "clf":
+                if type_ == "clf":
 
-                filename = os.path.join(
-                    FIGS_DIR, "figure4", f"{tag}-{type_}-feature-importance.png"
+                    filename = os.path.join(
+                        FIGS_DIR, "figure4", f"{b}-{tag}-{type_}-feature-importance.png"
+                    )
+
+                    df = map_target(
+                        df_orig,
+                        target="loop-tof",
+                        new_target_name="direction",
+                        encoding=lambda x: (
+                            1
+                            if float("inf") > x >= 1e-4
+                            else 2 if -float("inf") < x <= -1e-4 else 0
+                        ),
+                    )
+
+                    X_train, X_test, Y_train, Y_test = split_train_test(
+                        df,
+                        target="direction",
+                        features=features,
+                        test_size=0.10,
+                        random_state=SEED,
+                        check_shape=False,
+                    )
+
+                    best_model = joblib.load(
+                        os.path.join(MODELS_DIR, f"{b}_clf_" + tag + "-best-estm.pkl")
+                    )
+
+                elif type_ == "reg":
+
+                    filename = os.path.join(
+                        FIGS_DIR, "figure7", f"{b}-{tag}-{type_}-feature-importance.png"
+                    )
+
+                    df_copy = df_orig.copy()
+                    condition = (df_copy["loop-tof"] <= -1e-4) | (
+                        df_copy["loop-tof"] >= 1e-4
+                    )
+                    df_filtered = df_copy.loc[condition]
+
+                    df = map_target(
+                        df_filtered,
+                        target="loop-tof",
+                        new_target_name="log-loop-tof",
+                        encoding=lambda x: np.log(np.abs(x)),
+                    )
+
+                    X_train, X_test, Y_train, Y_test = split_train_test(
+                        df,
+                        target="log-loop-tof",
+                        features=features,
+                        test_size=0.10,
+                        random_state=SEED,
+                        check_shape=False,
+                    )
+                    best_model = joblib.load(
+                        os.path.join(MODELS_DIR, f"{b}_reg_" + tag + "-best-estm.pkl")
+                    )
+
+                pfi_pkl = os.path.join(
+                    FEATURE_IMPORTANCE_RESULTS_DIR, f"{b}-pfi-{tag}-{type_}.pkl"
                 )
+                # running PFI takes a bit of time, so save the results to a pickle file
+                # and load it if it exists. Only run the `else:` block to re-run PFI
+                if os.path.exists(pfi_pkl):
+                    with open(pfi_pkl, "rb") as f:
+                        results = pkl.load(f)
+                else:
+                    results = permutation_importance(
+                        best_model,
+                        X_test,
+                        Y_test,
+                        n_repeats=10,
+                        random_state=17,
+                        n_jobs=-1,
+                    )
+                    with open(pfi_pkl, "wb") as f:
+                        pkl.dump(results, f)
 
-                df = map_target(
-                    df_orig,
-                    target="loop-tof",
-                    new_target_name="direction",
-                    encoding=lambda x: (
-                        1
-                        if float("inf") > x >= 1e-4
-                        else 2 if -float("inf") < x <= -1e-4 else 0
-                    ),
+                feat_importances = {
+                    features[i]: results.importances_mean[i]
+                    for i in range(len(features))
+                }
+                sorted_imp = {
+                    k: v
+                    for k, v in sorted(
+                        feat_importances.items(),
+                        key=lambda item: item[1],
+                        reverse=False,
+                    )
+                }
+
+                # manually set y labels after plotted with (list(sorted_imp.keys()))
+                if b == "rf" and tag == "op" and type_ == "reg":
+                    y = [
+                        r"$\alpha_A$",
+                        r"$\alpha_C$",
+                        r"$\alpha_B$",
+                        r"$\gamma_{C-A}$",
+                        r"$\Delta BE_A$",
+                        r"$\gamma_{B-A}$",
+                        r"$\delta_{C-A}$",
+                        r"$\delta_{B-A}$",
+                        r"$\beta_B$",
+                        r"$\beta_A$",
+                        r"$\beta_C$",
+                    ]
+                elif tag == "op":
+                    y = [
+                        r"$\alpha_A$",
+                        r"$\alpha_C$",
+                        r"$\alpha_B$",
+                        r"$\Delta BE_A$",
+                        r"$\gamma_{C-A}$",
+                        r"$\gamma_{B-A}$",
+                        r"$\delta_{C-A}$",
+                        r"$\delta_{B-A}$",
+                        r"$\beta_B$",
+                        r"$\beta_A$",
+                        r"$\beta_C$",
+                    ]
+
+                create_bar_plot(
+                    list(sorted_imp.values()),
+                    y,
+                    xlabel="Feature Importance",
+                    filename=filename,
                 )
-
-                X_train, X_test, Y_train, Y_test = split_train_test(
-                    df,
-                    target="direction",
-                    features=features,
-                    test_size=0.10,
-                    random_state=SEED,
-                    check_shape=False,
-                )
-
-                best_model = joblib.load(
-                    os.path.join(MODELS_DIR, "xgb_clf_" + tag + "-best-estm.pkl")
-                )
-
-            elif type_ == "reg":
-
-                filename = os.path.join(
-                    FIGS_DIR, "figure7", f"{tag}-{type_}-feature-importance.png"
-                )
-
-                df_copy = df_orig.copy()
-                condition = (df_copy["loop-tof"] <= -1e-4) | (
-                    df_copy["loop-tof"] >= 1e-4
-                )
-                df_filtered = df_copy.loc[condition]
-
-                df = map_target(
-                    df_filtered,
-                    target="loop-tof",
-                    new_target_name="log-loop-tof",
-                    encoding=lambda x: np.log(np.abs(x)),
-                )
-
-                X_train, X_test, Y_train, Y_test = split_train_test(
-                    df,
-                    target="log-loop-tof",
-                    features=features,
-                    test_size=0.10,
-                    random_state=SEED,
-                    check_shape=False,
-                )
-                best_model = joblib.load(
-                    os.path.join(MODELS_DIR, "xgb_reg_" + tag + "-best-estm.pkl")
-                )
-
-            results = permutation_importance(
-                best_model, X_test, Y_test, n_repeats=10, random_state=17, n_jobs=-1
-            )
-
-            feat_importances = {
-                features[i]: results.importances_mean[i] for i in range(len(features))
-            }
-            sorted_imp = {
-                k: v
-                for k, v in sorted(
-                    feat_importances.items(), key=lambda item: item[1], reverse=False
-                )
-            }
-
-            if tag == "op":
-                y = [
-                    r"$\alpha_A$",
-                    r"$\alpha_C$",
-                    r"$\alpha_B$",
-                    r"$\Delta BE_A$",
-                    r"$\gamma_{C-A}$",
-                    r"$\gamma_{B-A}$",
-                    r"$\delta_{C-A}$",
-                    r"$\delta_{B-A}$",
-                    r"$\beta_B$",
-                    r"$\beta_A$",
-                    r"$\beta_C$",
-                ]
-
-            if tag == "rc":
-                y = [
-                    r"$\Delta BE_A$",
-                    r"$k_{-" + str(1) + r"," + str(2) + r"}$",
-                    r"$k_{-" + str(3) + r"," + str(1) + r"}$",
-                    r"$k_{" + str(1) + r"," + str(1) + r"}$",
-                    r"$k_{" + str(3) + r"," + str(2) + r"}$",
-                    r"$k_{-" + str(2) + r"," + str(1) + r"}$",
-                    r"$k_{-" + str(1) + r"," + str(1) + r"}$",
-                    r"$k_{-" + str(3) + r"," + str(2) + r"}$",
-                    r"$k_{-" + str(2) + r"," + str(2) + r"}$",
-                    r"$k_{" + str(3) + r"," + str(1) + r"}$",
-                    r"$k_{" + str(2) + r"," + str(1) + r"}$",
-                    r"$k_{" + str(2) + r"," + str(2) + r"}$",
-                    r"$k_{" + str(1) + r"," + str(2) + r"}$",
-                ]
-
-            create_bar_plot(
-                list(sorted_imp.values()),
-                y,
-                title="",
-                xlabel="Feature Importance",
-                filename=filename,
-            )
 
     return None
 
