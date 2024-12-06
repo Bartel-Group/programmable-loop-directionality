@@ -7,7 +7,7 @@ Overview of the data
 
 This folder includes scripts and data files used to train and evaluate machine learning models on the microkinetic data generated from the loop simulation. The `ml_env.yml` file is included such that anyone may recreate the environment used to generate the machine learning results. Rate constant models and grid searches are provided, though not thoroughly dicussed in the manuscript. Further analysis of the rate constant (`rc`) models is possible by including the `rc` model_tag in the main function of the analysis scripts. Finally, the .py files in `scripts` are meant to be run in the order they are numbered (i.e. one may run any of the scripts beginning in `3-` after running `1-` and `2-`, but should not run `3-` before all of `1-` and `2-`).
 
-*NOTE*: The Github version of this repository does *not* contain the grid search results of the RF models due to the large file size. The grid search results of the RF models can be found through UMN's DRUM repository (found here - <https://hdl.handle.net/11299/268118>) which acts as the permanent archieve of our repository at the time of publication.
+*NOTE*: The Github version of this repository does *not* contain the grid search results of the RF models due to the large file size. The grid search results of the RF models can be found through UMN's DRUM repository (found here - <https://hdl.handle.net/11299/268118>) which acts as the permanent archive of our repository at the time of publication.
 
 
 --------------------------
