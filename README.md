@@ -2,7 +2,7 @@
 
 This repository exists to share the data and scripts used in the paper "Catalytic Resonance Theory: Forecasting the Flow of Programmable Catalytic Loops" by Madeline Murphy, Kyle Noordhoek, Sallye Gathmann, Paul Dauenhauer, and Christopher Bartel.
 
-*NOTE*: The Github version of this repository does *not* contain the grid search results of the RF models due to the large file size. The grid search results of the RF models can be found through UMN's DRUM repository (found here - <https://hdl.handle.net/11299/268118>) which acts as the permanent archive of our repository at the time of publication.
+*NOTE*: The Github version of this repository does *not* contain the grid search results of the RF models due to the large file size. The grid search results of the RF models can be found through UMN's DRUM repository (found here - <https://doi.org/10.13020/bh14-3q71>) which acts as the permanent archive of our repository at the time of publication.
 
 -------------------
 
